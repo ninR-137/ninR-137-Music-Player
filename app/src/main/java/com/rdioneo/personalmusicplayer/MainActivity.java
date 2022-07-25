@@ -32,11 +32,8 @@ import java.util.List;
 //SIMPLE PROTOTYPE
 public class MainActivity extends AppCompatActivity {
 
-    //MediaPlayer music;
-    //Button playButton, pauseButton, stopButton;
-
-
     ArrayList<String> arrayList;
+    ArrayList<MediaPlayer> mediaList;
     ListView listView;
     ArrayAdapter<String> adapter;
 
@@ -50,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public void listViewSetUp(){
         listView = findViewById(R.id.listView);
         arrayList = new ArrayList<>();
+        mediaList = new ArrayList<>();
         getMusic();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(adapter);
@@ -57,7 +55,15 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //open music player to play desired song
+                //JUST A TEST NOT FINAL AT ALL
+
+                for(int i = 0; i < mediaList.size(); i++){
+                    if(mediaList.get(i).isPlaying()) mediaList.get(i).stop();
+                }
+
+                mediaList.get(position).start();
+
+                //Toast.makeText(MainActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -83,88 +89,12 @@ public class MainActivity extends AppCompatActivity {
                 arrayList.add("Title : "  + currentTitle + "\n"
                 + "Artist : " + currentArtist + "\n"
                 + "Location : " + currentLocation);
+
+                MediaPlayer md = MediaPlayer.create(this, Uri.parse(currentLocation));
+                mediaList.add(md);
             }while (songCursor.moveToNext());
         }
     }
-
-    // Method to read all the audio/MP3 files.
-    public List<AudioModel> getAllAudioFromDevice(final Context context) {
-        final List<AudioModel> tempAudioList = new ArrayList<>();
-
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Audio.AudioColumns.DATA,MediaStore.Audio.AudioColumns.TITLE ,MediaStore.Audio.AudioColumns.ALBUM, MediaStore.Audio.ArtistColumns.ARTIST,};
-        Cursor c = context.getContentResolver().query(uri,
-                projection,
-                null,
-                null,
-                null);
-
-        if (c != null) {
-            while (c.moveToNext()) {
-                // Create a model object.
-                AudioModel audioModel = new AudioModel();
-
-                String path = c.getString(0);   // Retrieve path.
-                String name = c.getString(1);   // Retrieve name.
-                String album = c.getString(2);  // Retrieve album name.
-                String artist = c.getString(3); // Retrieve artist name.
-
-                // Set data to the model object.
-                audioModel.setaName(name);
-                audioModel.setaAlbum(album);
-                audioModel.setaArtist(artist);
-                audioModel.setaPath(path);
-
-                /*
-                Log.e("Name :" + name, " Album :" + album);
-                Log.e("Path :" + path, " Artist :" + artist);
-                */
-
-                // Add the model object to the list .
-                tempAudioList.add(audioModel);
-            }
-            c.close();
-        }
-
-        // Return the list.
-        return tempAudioList;
-    }
-
-    /*
-    public void initOnclick(){
-        //playButton = findViewById(R.id.start);
-        //pauseButton = findViewById(R.id.pause);
-        //stopButton = findViewById(R.id.stop);
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                music.start();
-            }
-        });
-
-        pauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                music.pause();
-            }
-        });
-
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicstop();
-            }
-        });
-    }
-    // Stoping the music
-    public void musicstop()
-    {
-        music.stop();
-        music = MediaPlayer.create(this, R.raw.live_another_day);
-    }
-
-    */
 
     @Override
     protected void onResume() {
