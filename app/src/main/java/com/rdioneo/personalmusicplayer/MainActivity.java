@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,7 +19,10 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,19 +32,60 @@ import java.util.List;
 //SIMPLE PROTOTYPE
 public class MainActivity extends AppCompatActivity {
 
-    MediaPlayer music;
-    Button playButton, pauseButton, stopButton;
+    //MediaPlayer music;
+    //Button playButton, pauseButton, stopButton;
+
+
+    ArrayList<String> arrayList;
+    ListView listView;
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //music = MediaPlayer.create(this, R.raw.live_another_day);
-        //initOnclick();
-
     }
 
+
+    public void listViewSetUp(){
+        listView = findViewById(R.id.listView);
+        arrayList = new ArrayList<>();
+        getMusic();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //open music player to play desired song
+            }
+        });
+    }
+    public void getMusic(){
+        ContentResolver contentResolver = getContentResolver();
+        Uri songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor songCursor = contentResolver.query(songUri,
+                null,
+                null,
+                null,
+                null);
+
+        if(songCursor != null &&songCursor.moveToFirst()){
+            int songTitle = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int songArtist = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int songLocation = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+
+            do{
+                String currentTitle = songCursor.getString(songTitle);
+                String currentArtist = songCursor.getString(songArtist);
+                String currentLocation = songCursor.getString(songLocation);
+
+                arrayList.add("Title : "  + currentTitle + "\n"
+                + "Artist : " + currentArtist + "\n"
+                + "Location : " + currentLocation);
+            }while (songCursor.moveToNext());
+        }
+    }
 
     // Method to read all the audio/MP3 files.
     public List<AudioModel> getAllAudioFromDevice(final Context context) {
@@ -70,8 +115,10 @@ public class MainActivity extends AppCompatActivity {
                 audioModel.setaArtist(artist);
                 audioModel.setaPath(path);
 
+                /*
                 Log.e("Name :" + name, " Album :" + album);
                 Log.e("Path :" + path, " Artist :" + artist);
+                */
 
                 // Add the model object to the list .
                 tempAudioList.add(audioModel);
@@ -83,10 +130,11 @@ public class MainActivity extends AppCompatActivity {
         return tempAudioList;
     }
 
+    /*
     public void initOnclick(){
-        playButton = findViewById(R.id.start);
-        pauseButton = findViewById(R.id.pause);
-        stopButton = findViewById(R.id.stop);
+        //playButton = findViewById(R.id.start);
+        //pauseButton = findViewById(R.id.pause);
+        //stopButton = findViewById(R.id.stop);
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         music.stop();
         music = MediaPlayer.create(this, R.raw.live_another_day);
     }
+
+    */
 
     @Override
     protected void onResume() {
@@ -147,8 +197,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        getAllAudioFromDevice(this);
-
+        listViewSetUp();
     }
 
 

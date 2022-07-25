@@ -7,59 +7,13 @@
     android:background="#3D3E3E"
     android:orientation="vertical"
     android:theme="@style/Theme.AppCompat"
-    android:weightSum="1"
     tools:context=".MainActivity">
 
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_height="0dp"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_weight="0.75"
-        android:background="@drawable/nightingale_logo"
-        android:contentDescription="TempLogo" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.25"
-        android:layout_margin="15dp"
-        android:weightSum="3"
-        android:background="#A5AFAE"
-        android:orientation="horizontal"
-        android:padding="20dp">
-
-        <Button
-            android:id="@+id/pause"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="30dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/pause_button"
-            />
-
-        <Button
-            android:id="@+id/start"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="30dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/play_button"
-            />
-
-        <Button
-            android:id="@+id/stop"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_margin="30dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/stop_button"
-            />
-
-    </LinearLayout>
+        android:layout_height="match_parent"
+        />
 
 
 </LinearLayout>
