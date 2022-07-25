@@ -5,16 +5,24 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 //SIMPLE PROTOTYPE
@@ -28,8 +36,51 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        music = MediaPlayer.create(this, R.raw.live_another_day);
-        initOnclick();
+        //music = MediaPlayer.create(this, R.raw.live_another_day);
+        //initOnclick();
+
+    }
+
+
+    // Method to read all the audio/MP3 files.
+    public List<AudioModel> getAllAudioFromDevice(final Context context) {
+        final List<AudioModel> tempAudioList = new ArrayList<>();
+
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.Audio.AudioColumns.DATA,MediaStore.Audio.AudioColumns.TITLE ,MediaStore.Audio.AudioColumns.ALBUM, MediaStore.Audio.ArtistColumns.ARTIST,};
+        Cursor c = context.getContentResolver().query(uri,
+                projection,
+                null,
+                null,
+                null);
+
+        if (c != null) {
+            while (c.moveToNext()) {
+                // Create a model object.
+                AudioModel audioModel = new AudioModel();
+
+                String path = c.getString(0);   // Retrieve path.
+                String name = c.getString(1);   // Retrieve name.
+                String album = c.getString(2);  // Retrieve album name.
+                String artist = c.getString(3); // Retrieve artist name.
+
+                // Set data to the model object.
+                audioModel.setaName(name);
+                audioModel.setaAlbum(album);
+                audioModel.setaArtist(artist);
+                audioModel.setaPath(path);
+
+                Log.e("Name :" + name, " Album :" + album);
+                Log.e("Path :" + path, " Artist :" + artist);
+
+                // Add the model object to the list .
+                tempAudioList.add(audioModel);
+            }
+            c.close();
+        }
+
+        // Return the list.
+        return tempAudioList;
     }
 
     public void initOnclick(){
@@ -94,5 +145,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivityIfNeeded(intent, 101);
                 }
         }
+
+
+        getAllAudioFromDevice(this);
+
     }
+
+
 }
