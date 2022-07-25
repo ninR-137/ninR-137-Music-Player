@@ -20,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         music = MediaPlayer.create(this, R.raw.live_another_day);
+        initOnclick();
+    }
+
+    public void initOnclick(){
         playButton = findViewById(R.id.start);
         pauseButton = findViewById(R.id.pause);
         stopButton = findViewById(R.id.stop);
@@ -27,14 +31,14 @@ public class MainActivity extends AppCompatActivity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                musicplay();
+                music.start();
             }
         });
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                musicpause();
+                music.pause();
             }
         });
 
@@ -44,18 +48,6 @@ public class MainActivity extends AppCompatActivity {
                 musicstop();
             }
         });
-    }
-
-    // Plaing the music
-    public void musicplay()
-    {
-        music.start();
-    }
-
-    // Pausing the music
-    public void musicpause()
-    {
-        music.pause();
     }
 
     // Stoping the music
